@@ -1,13 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
+import { getCollection } from 'astro:content';
+
 export async function getStaticPaths() {
-  const posts = await Astro.glob('../../content/blog/*.md');
+  const posts = await getCollection('blog');
   const allTags = new Set<string>();
   
   posts.forEach(post => {
-    if (post.frontmatter.tags) {
-      post.frontmatter.tags.forEach((tag: string) => allTags.add(tag));
+    if (post.data.tags) {
+      post.data.tags.forEach((tag: string) => allTags.add(tag));
     }
   });
   
@@ -18,12 +20,10 @@ export async function getStaticPaths() {
 }
 
 const { tag } = Astro.props;
-const posts = await Astro.glob('../../content/blog/*.md');
-const filteredPosts = posts.filter(post => 
-  post.frontmatter.tags && post.frontmatter.tags.includes(tag)
-).sort((a, b) => 
-  new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
-);
+const posts = await getCollection('blog');
+const filteredPosts = posts
+  .filter(post => post.data.tags && post.data.tags.includes(tag))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
 <BaseLayout title={`标签：${tag} - 简约博客`}>
