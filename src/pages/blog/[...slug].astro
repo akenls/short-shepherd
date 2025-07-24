@@ -1,0 +1,236 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id.replace('.md', '') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<BaseLayout 
+  title={`${post.data.title} - 简约博客`}
+  description={post.data.excerpt}>
+  
+  <style>
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .post-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .post-content {
+      line-height: 1.8;
+      font-size: 1.125rem;
+    }
+
+    .post-content :global(h1) {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      line-height: 1.3;
+    }
+
+    .post-content :global(h2) {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin: 2rem 0 1rem;
+      line-height: 1.4;
+    }
+
+    .post-content :global(h3) {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.75rem;
+      line-height: 1.4;
+    }
+
+    .post-content :global(p) {
+      margin-bottom: 1.5rem;
+    }
+
+    .post-content :global(a) {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .post-content :global(a:hover) {
+      color: var(--hover-color);
+      text-decoration: underline;
+    }
+
+    .post-content :global(code) {
+      background: var(--border-color);
+      padding: 0.125rem 0.25rem;
+      border-radius: 0.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+    }
+
+    .post-content :global(pre) {
+      background: var(--border-color);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    .post-content :global(pre code) {
+      background: none;
+      padding: 0;
+      font-size: 0.875rem;
+    }
+
+    .post-content :global(ul), 
+    .post-content :global(ol) {
+      margin: 1rem 0 1rem 2rem;
+    }
+
+    .post-content :global(li) {
+      margin-bottom: 0.5rem;
+    }
+
+    .post-content :global(blockquote) {
+      border-left: 4px solid var(--accent-color);
+      margin: 1.5rem 0;
+      padding-left: 1rem;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    .post-content :global(img) {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: var(--text-color);
+    }
+
+    .post-tags {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .post-tags-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      background: var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .tag:hover {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .post-title {
+        font-size: 1.75rem;
+      }
+      
+      .post-content {
+        font-size: 1rem;
+      }
+      
+      .post-content :global(h1) {
+        font-size: 1.5rem;
+      }
+      
+      .post-content :global(h2) {
+        font-size: 1.375rem;
+      }
+      
+      .post-content :global(h3) {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+
+  <a href="/" class="back-link">← 返回首页</a>
+
+  <article>
+    <header class="post-header">
+      <h1 class="post-title">{post.data.title}</h1>
+      
+      <div class="post-meta">
+        <time datetime={post.data.date}>
+          {new Date(post.data.date).toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </time>
+        <span>{post.data.readingTime || '5分钟阅读'}</span>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <Content />
+    </div>
+
+    {post.data.tags && (
+      <div class="post-tags">
+        <p class="post-tags-label">标签：</p>
+        <div class="tags-list">
+          {post.data.tags.map((tag: string) => (
+            <a href={`/tags/${tag}`} class="tag">{tag}</a>
+          ))}
+        </div>
+      </div>
+    )}
+  </article>
+</BaseLayout>

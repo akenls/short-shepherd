@@ -1,33 +1,47 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 
-import { getCollection } from 'astro:content';
+export async function getStaticPaths() {
+  const posts = await Astro.glob('../../content/blog/*.md');
+  const allTags = new Set<string>();
+  
+  posts.forEach(post => {
+    if (post.frontmatter.tags) {
+      post.frontmatter.tags.forEach((tag: string) => allTags.add(tag));
+    }
+  });
+  
+  return Array.from(allTags).map(tag => ({
+    params: { tag },
+    props: { tag },
+  }));
+}
 
-// 获取所有博客文章
-const posts = await getCollection('blog');
-const sortedPosts = posts.sort((a, b) => 
-  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+const { tag } = Astro.props;
+const posts = await Astro.glob('../../content/blog/*.md');
+const filteredPosts = posts.filter(post => 
+  post.frontmatter.tags && post.frontmatter.tags.includes(tag)
+).sort((a, b) => 
+  new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
 );
 ---
 
-<BaseLayout title="简约博客 - 专注于内容本身">
+<BaseLayout title={`标签：${tag} - 简约博客`}>
   <style>
-    .hero {
+    .tag-header {
       text-align: center;
       margin-bottom: 3rem;
     }
 
-    .hero h1 {
-      font-size: 2.5rem;
+    .tag-header h1 {
+      font-size: 2rem;
       font-weight: 700;
-      margin-bottom: 1rem;
-      line-height: 1.2;
+      margin-bottom: 0.5rem;
     }
 
-    .hero p {
-      font-size: 1.125rem;
+    .tag-count {
       color: var(--text-secondary);
-      margin-bottom: 2rem;
+      font-size: 1.125rem;
     }
 
     .post-list {
@@ -82,25 +96,19 @@ const sortedPosts = posts.sort((a, b) =>
       margin-bottom: 1rem;
     }
 
-    .post-tags {
-      display: flex;
-      flex-wrap: wrap;
+    .back-link {
+      display: inline-flex;
+      align-items: center;
       gap: 0.5rem;
-    }
-
-    .tag {
-      background: var(--border-color);
       color: var(--text-secondary);
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      font-size: 0.75rem;
       text-decoration: none;
-      transition: all 0.2s ease;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+      transition: color 0.2s ease;
     }
 
-    .tag:hover {
-      background: var(--accent-color);
-      color: white;
+    .back-link:hover {
+      color: var(--text-color);
     }
 
     .no-posts {
@@ -110,12 +118,8 @@ const sortedPosts = posts.sort((a, b) =>
     }
 
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2rem;
-      }
-      
-      .hero p {
-        font-size: 1rem;
+      .tag-header h1 {
+        font-size: 1.75rem;
       }
       
       .post-title {
@@ -124,14 +128,16 @@ const sortedPosts = posts.sort((a, b) =>
     }
   </style>
 
-  <div class="hero">
-    <h1>简约博客</h1>
-    <p>专注于内容本身，让文字说话</p>
+  <a href="/" class="back-link">← 返回首页</a>
+
+  <div class="tag-header">
+    <h1>#{tag}</h1>
+    <p class="tag-count">{filteredPosts.length} 篇文章</p>
   </div>
 
   <div class="post-list">
-    {sortedPosts.length > 0 ? (
-      sortedPosts.map((post) => (
+    {filteredPosts.length > 0 ? (
+      filteredPosts.map((post) => (
         <article class="post-card">
           <h2 class="post-title">
             <a href={`/blog/${post.id.replace('.md', '')}`}>{post.data.title}</a>
@@ -149,19 +155,11 @@ const sortedPosts = posts.sort((a, b) =>
           </div>
           
           <p class="post-excerpt">{post.data.excerpt}</p>
-          
-          {post.data.tags && (
-            <div class="post-tags">
-              {post.data.tags.map((tag: string) => (
-                <a href={`/tags/${tag}`} class="tag">{tag}</a>
-              ))}
-            </div>
-          )}
         </article>
       ))
     ) : (
       <div class="no-posts">
-        <p>暂无文章，敬请期待...</p>
+        <p>暂无该标签的文章</p>
       </div>
     )}
   </div>

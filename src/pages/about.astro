@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="关于 - 简约博客">
+  <style>
+    .about-content {
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.8;
+      font-size: 1.125rem;
+    }
+
+    .about-content h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .about-content p {
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+    }
+
+    .about-content strong {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: var(--text-color);
+    }
+
+    @media (max-width: 768px) {
+      .about-content {
+        font-size: 1rem;
+      }
+      
+      .about-content h1 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+
+  <a href="/" class="back-link">← 返回首页</a>
+
+  <div class="about-content">
+    <h1>关于这个博客</h1>
+    
+    <p>
+      这是一个<strong>简约博客</strong>，专注于内容本身的设计理念。
+      在这个信息过载的时代，我们希望能为用户提供一个<strong>纯粹、简洁、专注</strong>的阅读体验。
+    </p>
+
+    <p>
+      博客采用<strong>Astro</strong>框架构建，具备极快的加载速度和优秀的SEO表现。
+      简洁的设计风格让用户能够专注于文字内容，减少视觉干扰。
+    </p>
+
+    <p>
+      我们相信，好的内容不需要华丽的包装。
+      每一个字符、每一段文字都应该被认真对待，
+      而不是被淹没在复杂的设计和冗余的功能中。
+    </p>
+
+    <p>
+      如果你也认同这种理念，欢迎一起交流和分享。
+    </p>
+  </div>
+</BaseLayout>
