@@ -200,7 +200,7 @@ const { Content } = await post.render();
     }
   </style>
 
-  <a href="/" class="back-link">← 返回首页</a>
+  <a href="/short-shepherd/" class="back-link">← 返回首页</a>
 
   <article>
     <header class="post-header">
@@ -227,7 +227,7 @@ const { Content } = await post.render();
         <p class="post-tags-label">标签：</p>
         <div class="tags-list">
           {post.data.tags.map((tag: string) => (
-            <a href={`/tags/${tag}`} class="tag">{tag}</a>
+            <a href={`/short-shepherd/tags/${tag}`} class="tag">{tag}</a>
           ))}
         </div>
       </div>

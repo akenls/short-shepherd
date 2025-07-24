@@ -128,7 +128,7 @@ const filteredPosts = posts
     }
   </style>
 
-  <a href="/" class="back-link">← 返回首页</a>
+  <a href="/short-shepherd/" class="back-link">← 返回首页</a>
 
   <div class="tag-header">
     <h1>#{tag}</h1>
@@ -140,7 +140,7 @@ const filteredPosts = posts
       filteredPosts.map((post) => (
         <article class="post-card">
           <h2 class="post-title">
-            <a href={`/blog/${post.id.replace('.md', '')}`}>{post.data.title}</a>
+            <a href={`/short-shepherd/blog/${post.id.replace('.md', '')}`}>{post.data.title}</a>
           </h2>
           
           <div class="post-meta">
